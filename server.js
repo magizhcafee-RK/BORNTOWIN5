@@ -95,9 +95,9 @@ app.post('/api/admin/pins/generate',(req,res)=>{
 app.get('/api/member/referral-info/:id',(req,res)=>{
  const id=String(req.params.id||'').trim();
  if(!id||id==='FIRST MEMBER')return res.json({valid:id==='FIRST MEMBER',member:null});
- const m=db.members.find(x=>x.memberId===id);
+ const m=db.members.find(x=>x.memberId===id||x.referralId===id||referralCode(x.memberId)===id);
  if(!m)return res.status(404).json({valid:false,error:'Referral ID not found'});
- res.json({valid:true,member:{memberId:m.memberId,name:m.name,mobile:m.mobile,level:Number(m.level||1)}});
+ res.json({valid:true,member:{memberId:m.memberId,referralId:m.referralId||referralCode(m.memberId),name:m.name,mobile:m.mobile,level:Number(m.level||1)}});
 });
 app.post('/api/member/login',(req,res)=>{const m=db.members.find(x=>x.mobile===String(req.body.mobile||'').trim());if(!m)return res.status(404).json({error:'Member not found. Please register first.'});const supplied=String(req.body.password||'');if(!m.passwordHash)return res.status(401).json({error:'Password not set. Please use Forgot Password and contact Admin.'});if(hashPassword(supplied)!==m.passwordHash)return res.status(401).json({error:'Incorrect password'});res.json({member:{...memberPublic(m),mustChangePassword:!!m.mustChangePassword}})});
 app.post('/api/member/forgot-password',(req,res)=>{const mobile=String(req.body.mobile||'').trim();const m=db.members.find(x=>x.mobile===mobile);if(!m)return res.status(404).json({error:'Mobile number not found'});const pending=db.passwordResetRequests.find(x=>x.memberId===m.memberId&&x.status==='Pending');if(pending)return res.json({ok:true,message:'Password reset request already sent to Admin.'});db.passwordResetRequests.push({id:'PR-'+crypto.randomBytes(4).toString('hex').toUpperCase(),memberId:m.memberId,mobile:m.mobile,name:m.name,status:'Pending',createdAt:new Date().toISOString()});save(db);res.json({ok:true,message:'Password reset request sent to Admin. Please contact Admin after approval.'})});

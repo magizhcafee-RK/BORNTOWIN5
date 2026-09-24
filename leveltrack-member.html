@@ -50,7 +50,7 @@ body{background:radial-gradient(circle at 15% 0,#eef6f0 0,#f6f8f5 35%,#f3f4f1 10
 </style>
 
 </head><body>
-<header class="top"><div class="logo">B5</div><div class="brand"><b>BORNTOWIN5</b><small>Member • Level Tracking</small></div></header>
+<header class="top"><div class="logo"><img src="b5-logo.png" alt="B5 Logo"></div><div class="brand"><b>BORNTOWIN5</b><small>Member • Level Tracking</small></div><div class="top-actions"><button onclick="location.reload()">↻ Refresh</button><button onclick="levelTrackLogout()">Logout</button></div></header>
 <main class="wrap">
 <div class="topnav"><button class="active" onclick="view('member')">👤 MEMBER</button><button onclick="view('receiver')">💳 RECEIVER</button></div>
 <section id="member">
@@ -198,7 +198,15 @@ setInterval(load,5000);setInterval(()=>{if(!$('receiver').classList.contains('hi
 .b5-embedded #receiver{display:none!important}
 .b5-embedded #receiver.b5-v12-show{display:block!important}
 .b5-embedded .topnav{display:none!important}
-.b5-embedded .top{display:none!important}
-.b5-embedded .wrap{padding-top:72px}
+.b5-embedded .top{display:flex!important;padding-left:72px!important;padding-right:10px!important;position:sticky!important;top:0!important;z-index:20!important;min-height:64px!important}
+.b5-embedded .wrap{padding-top:0}
 </style>
-</body></html>
+<script>function levelTrackLogout(){localStorage.removeItem('BORNTOWIN5_MEMBER_ID');try{if(window.parent&&window.parent!==window){window.parent.location.reload();return}}catch(e){}location.reload()}</script>
+<style id="b5-final-leveltrack-header">
+.top{padding-left:72px!important;padding-right:10px!important;position:sticky!important;top:0!important;z-index:20!important;min-height:64px!important;}
+.top .logo{overflow:hidden;background:#fff!important;border:1px solid #d9e3dc!important;}
+.top .logo img{width:100%;height:100%;object-fit:contain;display:block;border-radius:inherit;}
+.top-actions{margin-left:auto;display:flex;gap:8px;}
+.top-actions button{width:auto!important;padding:8px 10px!important;margin:0!important;border-radius:11px!important;}
+@media(max-width:520px){.top{padding-left:72px!important}.top-actions{gap:5px}.top-actions button{font-size:10px;padding:7px 8px!important}}
+</style></body></html>
