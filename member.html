@@ -287,8 +287,7 @@ async function b5Refresh(){
 }
 async function memberRefresh(){await b5Refresh();await b5LoadMessages()}
 function memberLogout(){localStorage.removeItem('BORNTOWIN5_MEMBER_ID');location.reload()}
-function shareReferralLinkWhatsApp(){const e=document.getElementById('myReferralLink');const link=(e?.value||'').trim();if(!link)return;const text='Join BORNTOWIN5 using my referral link:
-'+link;location.href='https://wa.me/?text='+encodeURIComponent(text)}
+function shareReferralLinkWhatsApp(){const e=document.getElementById('myReferralLink');const link=(e?.value||'').trim();if(!link)return;const text='Join BORNTOWIN5 using my referral link: '+link;location.href='https://wa.me/?text='+encodeURIComponent(text)}
 function copyReferralLink(){const e=document.getElementById('myReferralLink');e.select();navigator.clipboard?.writeText(e.value);alert('Referral link copied')}
 function makeTree(n,l){return `<div class="node"><b>L${l} — ${n.name}</b><div class="small">${n.id}</div>${n.children?.length?'<div class="children">'+n.children.map(x=>makeTree(x,l+1)).join('')+'</div>':''}</div>`}
 async function showLevel(level){const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(!id)return;try{const d=await b5api('/api/member/level/'+encodeURIComponent(id)+'/'+level),box=document.getElementById('detail');box.style.display='block';box.innerHTML='<h3>Level '+level+' — '+d.members.length+' Members</h3>'+(d.members.map(x=>`<div class="member"><b>${x.name}</b><div class="small">${x.memberId} • ${x.mobile}</div></div>`).join('')||'<div class="small">இந்த Level-ல் தற்போது உறுப்பினர்கள் இல்லை.</div>')}catch(e){}}
