@@ -77,7 +77,7 @@ async function load(){
  const mid=id();if(!mid){$('memberStatus').innerHTML='<div class="warn">Member login required.</div>';return}
  try{
   const [d,md]=await Promise.all([api('/api/leveltrack/member/dashboard/'+encodeURIComponent(mid)),api('/api/member/dashboard/'+encodeURIComponent(mid))]);
-  state.lt=d;state.memberDashboard=md;const m=d.member||{};const level=Number(m.level||1);const refs=(md.levels&&md.levels[1])||[];
+  state.lt=d;state.memberDashboard=md;d.upgradeHistory=d.upgradeHistory||d.history||[];const m=d.member||{};const level=Number(m.level||1);const refs=(md.levels&&md.levels[1])||[];
   $('mName').textContent=m.name||'—';$('mMobile').textContent=m.mobile||'—';$('mId').textContent=m.memberId||mid;$('mStatus').textContent=m.status||'ACTIVE';$('mLevel').textContent='L'+level;
   $('refLink').value=location.origin+'/member.html?ref='+encodeURIComponent(m.memberId);
   $('refList').innerHTML=refs.length?refs.map((r,i)=>`<div class="ref"><b>${i+1}. ${esc(r.name)}</b><br><span class="small">${esc(r.memberId)} • ${esc(r.mobile)}</span></div>`).join(''):'<div class="note">No direct referrals yet.</div>';

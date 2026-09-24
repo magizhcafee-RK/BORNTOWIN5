@@ -119,6 +119,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--b5-gold)
 #memberProfileEdit .detail-grid>div{background:#fbfcfa;border:1px solid #e4ebe6;border-radius:13px;padding:8px 10px}
 #memberProfileEdit .detail-grid input{background:transparent!important;border:0!important;padding:6px 0!important;margin:0!important}
 #memberProfileEdit h4{color:var(--b5-green);letter-spacing:.3px;border-bottom:1px solid #eadfc8;padding-bottom:8px}
+#unifiedMemberMenuBtn{top:78px!important;left:18px!important;z-index:2147483000!important}
 #unifiedMemberSidebar{background:linear-gradient(180deg,#fffdf8 0,#f7faf7 100%)!important;border-right:1px solid #e3d8bd!important}
 #unifiedMemberSidebar .uitem{background:#f7f8f5!important;border:1px solid #e4e9e5!important}
 #unifiedMemberSidebar .uitem:hover{border-color:#c89a4b!important;transform:translateX(2px)}
@@ -133,8 +134,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--b5-gold)
 
 
 <style id="b5-splash-style">
-#b5Splash{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#063f2e;transition:opacity .25s ease,visibility .25s ease}
-#b5Splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+#b5Splash{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#063f2e;transition:opacity .4s ease,visibility .4s ease}
+#b5Splash.hide{opacity:0;visibility:hidden;pointer-events:none}.b5SplashVideo{object-position:center center}
 .b5SplashVideo{width:100%;height:100%;object-fit:cover;display:block;background:#063f2e}
 </style>
 </head>
@@ -250,6 +251,7 @@ async function b5Login(){const m=document.getElementById('b5LoginMobile').value.
 async function b5ForgotPassword(){const m=document.getElementById('b5LoginMobile').value.trim();if(!/^\d{10}$/.test(m))return document.getElementById('b5LoginMsg').textContent='Enter your registered 10 digit Mobile Number first';try{const d=await b5api('/api/member/forgot-password',{method:'POST',body:JSON.stringify({mobile:m})});document.getElementById('b5LoginMsg').textContent=d.message||'Password reset request sent to Admin.'}catch(e){document.getElementById('b5LoginMsg').textContent=e.message}}
 
 async function b5ChangePassword(){const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(!id)return;const oldPw=prompt('Current password');if(oldPw===null)return;const newPw=prompt('New password (minimum 6 characters)');if(newPw===null)return;const confirmPw=prompt('Confirm new password');if(newPw!==confirmPw)return alert('Passwords do not match');try{await b5api('/api/member/password/'+encodeURIComponent(id),{method:'POST',body:JSON.stringify({oldPassword:oldPw,newPassword:newPw})});alert('Password changed successfully.')}catch(e){alert(e.message)}}
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 function b5Fill(m){document.getElementById('memberName').textContent=m.name;document.getElementById('memberId').textContent=m.memberId;document.getElementById('memberMobile').textContent=m.mobile;document.getElementById('memberStatus').textContent=(m.status==='Rejected'?'REJECTED':'ACTIVE');document.getElementById('memberAvatar').textContent=(m.name||'B5').charAt(0).toUpperCase()}
 let referralTimer;
 async function checkReferralId(){const el=document.getElementById('referralConfirm');const id=document.getElementById('rReferral')?.value.trim();if(!el)return;if(!id||id==='FIRST MEMBER'){el.textContent=id==='FIRST MEMBER'?'✓ First Member registration':'Enter Referral ID';el.style.color='#667085';return}clearTimeout(referralTimer);referralTimer=setTimeout(async()=>{try{const d=await b5api('/api/member/referral-info/'+encodeURIComponent(id));el.innerHTML=`✓ Referral confirmed: <b>${String(d.member.name).replace(/</g,'&lt;')}</b> (${d.member.memberId})`;el.style.color='#087f4f'}catch(e){el.textContent='✕ Referral ID not found';el.style.color='#b42318'}},250)}
@@ -257,7 +259,32 @@ async function shareFirstAvailablePin(){const id=localStorage.getItem('BORNTOWIN
 async function b5Register(){const ids=['rName','rPlace','rMobile','rReferral','b5JoinPin','rPassword','rPassword2'];for(const id of ids){const e=document.getElementById(id);if(!e.value.trim())return document.getElementById('b5RegMsg').textContent='அனைத்து கட்டாய விவரங்களையும் நிரப்பவும்'}const mobile=document.getElementById('rMobile').value.trim();if(!/^\d{10}$/.test(mobile))return document.getElementById('b5RegMsg').textContent='Mobile Number must be exactly 10 digits';const pw=document.getElementById('rPassword').value;if(pw.length<6)return document.getElementById('b5RegMsg').textContent='Password must be at least 6 characters';if(pw!==document.getElementById('rPassword2').value)return document.getElementById('b5RegMsg').textContent='Passwords do not match';if(!document.getElementById('rDeclaration').checked)return document.getElementById('b5RegMsg').textContent='Declaration accept செய்யவும்';const b={name:document.getElementById('rName').value.trim(),place:document.getElementById('rPlace').value.trim(),mobile,referral:document.getElementById('rReferral').value.trim()||'FIRST MEMBER',pin:document.getElementById('b5JoinPin').value.trim().toUpperCase(),password:pw};try{const d=await b5api('/api/member/register',{method:'POST',body:JSON.stringify(b)});document.getElementById('b5RegMsg').textContent='✓ Registration successful. Member ID: '+d.member.memberId+' — Login செய்யவும்.';document.getElementById('b5LoginMobile').value=mobile;b5Tab('login');document.getElementById('b5LoginMsg').textContent='Registration successful. Password மூலம் Login செய்யலாம்.';document.getElementById('B5_MEMBER_GATE').style.display='block'}catch(e){document.getElementById('b5RegMsg').textContent=e.message}}
 function b5FillProfile(p){const box=document.getElementById('memberProfileEdit');if(!box)return;if(p.profileLocked){box.innerHTML='<div style="margin-bottom:12px"><b>My Profile</b><div class="small">Profile verified and locked</div></div><div class="detail-grid"><div><small>Name</small><b>'+esc(p.name)+'</b></div><div><small>Place / City</small><b>'+esc(p.place)+'</b></div><div><small>Mobile</small><b>'+esc(p.mobile)+'</b></div><div><small>Referral ID</small><b>'+esc(p.referralId||p.referral)+'</b></div><div><small>Account Holder</small><b>'+esc(p.accountHolder)+'</b></div><div><small>Bank Name</small><b>'+esc(p.bank)+'</b></div><div><small>Account Number</small><b>'+esc(p.account)+'</b></div><div><small>IFSC</small><b>'+esc(p.ifsc)+'</b></div><div><small>Branch</small><b>'+esc(p.branch)+'</b></div><div><small>UPI ID</small><b>'+esc(p.upi)+'</b></div></div><div class="b5-msg" style="margin-top:12px">For profile changes, please contact Admin.</div>';return}const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v||''};set('profileName',p.name);set('profilePlace',p.place);set('profileMobile',p.mobile);set('profileReferral',p.referralId||p.referral);set('profileAccountHolder',p.accountHolder);set('profileBank',p.bank);set('profileAccount',p.account);set('profileIfsc',p.ifsc);set('profileBranch',p.branch);set('profileUpi',p.upi)}
 async function saveMemberProfile(){const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(!id)return;const b={name:document.getElementById('profileName').value.trim(),place:document.getElementById('profilePlace').value.trim(),accountHolder:document.getElementById('profileAccountHolder').value.trim(),bank:document.getElementById('profileBank').value.trim(),account:document.getElementById('profileAccount').value.trim(),ifsc:document.getElementById('profileIfsc').value.trim(),branch:document.getElementById('profileBranch').value.trim(),upi:document.getElementById('profileUpi').value.trim()};const msg=document.getElementById('profileMsg');try{const d=await b5api('/api/member/profile/'+encodeURIComponent(id),{method:'POST',body:JSON.stringify(b)});if(msg)msg.textContent='✓ Profile saved successfully.';b5Fill(d.member);b5FillProfile(d.profile)}catch(e){const live=document.getElementById('profileMsg');if(live)live.textContent=e.message;}}
-async function b5Refresh(){const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(!id)return;try{const d=await b5api('/api/member/dashboard/'+encodeURIComponent(id));b5Fill(d.member); if(d.profile) b5FillProfile(d.profile); for(let i=1;i<=7;i++)document.getElementById('lv'+i).textContent=d.levels[i]?.length||0;document.getElementById('tree').innerHTML=makeTree(d.tree,0);document.getElementById('walletBalance').textContent=d.wallet.available+' PINs';document.getElementById('walletReceived').textContent=d.wallet.received;document.getElementById('walletUsed').textContent=d.wallet.used;document.getElementById('walletAvailable').textContent=d.wallet.available;document.getElementById('walletBar').style.width=(d.wallet.received?d.wallet.available/d.wallet.received*100:0)+'%';b5RenderWalletPins(d.wallet.pins||[]);const base=location.origin+location.pathname;document.getElementById('myReferralLink').value=base+'?ref='+encodeURIComponent(d.member.referralId||d.member.memberId);const msgs=d.messages||[];document.getElementById('dashboardAdminMessageList').innerHTML=msgs.length?msgs.map(x=>`<div class="msgbox" style="margin-top:8px;font-size:15px"><b>Admin</b><div style="margin-top:7px">${String(x.message).replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div><div class="small" style="margin-top:6px">${x.at?new Date(x.at).toLocaleString():''}</div></div>`).join(''):'<div class="small">Admin message இல்லை.</div>'}catch(e){}}
+async function b5Refresh(){
+ const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(!id)return;
+ try{
+  const d=await b5api('/api/member/dashboard/'+encodeURIComponent(id));
+  b5Fill(d.member);
+  if(d.profile)b5FillProfile(d.profile);
+  const levels=d.levels||{};
+  for(let i=1;i<=7;i++){const e=document.getElementById('lv'+i);if(e)e.textContent=levels[i]?.length||0;}
+  const treeEl=document.getElementById('tree');if(treeEl&&d.tree)treeEl.innerHTML=makeTree(d.tree,0);
+  if(d.wallet){
+   const e1=document.getElementById('walletBalance');if(e1)e1.textContent=d.wallet.available+' PINs';
+   const e2=document.getElementById('walletReceived');if(e2)e2.textContent=d.wallet.received;
+   const e3=document.getElementById('walletUsed');if(e3)e3.textContent=d.wallet.used;
+   const e4=document.getElementById('walletAvailable');if(e4)e4.textContent=d.wallet.available;
+   const e5=document.getElementById('walletBar');if(e5)e5.style.width=(d.wallet.received?d.wallet.available/d.wallet.received*100:0)+'%';
+   b5RenderWalletPins(d.wallet.pins||[]);
+  }
+  const link=document.getElementById('myReferralLink');
+  if(link)link.value=location.origin+location.pathname+'?ref='+encodeURIComponent(d.member.referralId||d.member.memberId);
+  const msgEl=document.getElementById('dashboardAdminMessageList'),msgs=d.messages||[];
+  if(msgEl)msgEl.innerHTML=msgs.length?msgs.map(x=>`<div class="msgbox" style="margin-top:8px;font-size:15px"><b>Admin</b><div style="margin-top:7px">${esc(x.message)}</div><div class="small" style="margin-top:6px">${x.at?new Date(x.at).toLocaleString():''}</div></div>`).join(''):'<div class="small">Admin message இல்லை.</div>';
+ }catch(e){
+  const msg=document.getElementById('dashboardAdminMessageList');
+  if(msg)msg.innerHTML='<div class="b5-msg b5-err">'+esc(e.message)+'</div>';
+ }
+}
 async function memberRefresh(){await b5Refresh();await b5LoadMessages()}
 function memberLogout(){localStorage.removeItem('BORNTOWIN5_MEMBER_ID');location.reload()}
 function copyReferralLink(){const e=document.getElementById('myReferralLink');e.select();navigator.clipboard?.writeText(e.value);alert('Referral link copied')}
@@ -311,7 +338,7 @@ window.addEventListener('load',initMember);
  ready();new MutationObserver(ready).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['style','class']});setInterval(ready,1000);
 })();
 </script>
-<script id="b5-splash-script">window.addEventListener('load',function(){const s=document.getElementById('b5Splash'),v=document.querySelector('.b5SplashVideo');const hide=()=>s?.classList.add('hide');if(v){v.currentTime=0;v.play().catch(()=>{});}setTimeout(hide,1000);});</script></body>
+<script id="b5-splash-script">window.addEventListener('load',function(){const s=document.getElementById('b5Splash'),v=document.querySelector('.b5SplashVideo');if(!s||!v)return;let finished=false;const hide=()=>{if(finished)return;finished=true;s.classList.add('hide');setTimeout(()=>s.remove(),500)};v.currentTime=0;v.addEventListener('ended',hide,{once:true});v.addEventListener('error',()=>setTimeout(hide,1200),{once:true});const fallback=setTimeout(()=>{if(!v.duration||!isFinite(v.duration))hide()},15000);v.play().catch(()=>{clearTimeout(fallback);setTimeout(hide,1200)});});</script></body>
 </html><style>
 .pin button{border:0;border-radius:8px;padding:6px 9px;background:#075B35;color:#fff;font-weight:700;font-size:11px}
 </style>
