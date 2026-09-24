@@ -235,7 +235,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--b5-gold)
     <div class="box"><b>0</b><small>Expired / Cancelled</small></div>
   </div>
   <div class="pinbox" id="walletPins"></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><button onclick="useWalletPin()">Use 1 PIN → Activate Member</button><button onclick="shareFirstAvailablePin()">Share PIN</button></div>
+  
   <div id="walletAct" class="success" style="display:none"></div>
 </section>
 </main>
@@ -276,7 +276,7 @@ async function useWalletPin(){
 }
 async function b5LoadMessages(){const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID'),el=document.getElementById('memberMessageList');if(!id)return;try{const d=await b5api('/api/member/messages/'+encodeURIComponent(id));if(el)el.innerHTML=d.messages.length?d.messages.map(x=>`<div class="msgbox" style="margin-top:8px"><b>Admin</b><div style="margin-top:5px">${String(x.message).replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div><div class="small" style="margin-top:6px">${x.at?new Date(x.at).toLocaleString():''}</div></div>`).join(''):'<div class="small">இன்னும் messages இல்லை.</div>';const dash=document.getElementById('dashboardAdminMessageList');if(dash)dash.innerHTML=d.messages.length?d.messages.map(x=>`<div class="msgbox" style="margin-top:8px;font-size:15px"><b>Admin</b><div style="margin-top:7px">${String(x.message).replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div><div class="small" style="margin-top:6px">${x.at?new Date(x.at).toLocaleString():''}</div></div>`).join(''):'<div class="small">Admin message இல்லை.</div>'}catch(e){}}
 setInterval(()=>{if(localStorage.getItem('BORNTOWIN5_MEMBER_ID'))b5LoadMessages()},5000);
-function initMember(){const ref=new URLSearchParams(location.search).get('ref');document.getElementById('B5_MEMBER_GATE').style.display='block';if(ref){b5Tab('register');document.getElementById('rReferral').value=ref;}else{b5Tab('login');}document.getElementById('b5LoginMobile').value='';document.getElementById('b5LoginPassword').value='';}
+function initMember(){const params=new URLSearchParams(location.search),ref=params.get('ref'),joinPin=params.get('joinPin');document.getElementById('B5_MEMBER_GATE').style.display='block';if(ref||joinPin){b5Tab('register');if(ref)document.getElementById('rReferral').value=ref;if(joinPin)document.getElementById('b5JoinPin').value=joinPin.toUpperCase();checkReferralId();}else{b5Tab('login');}document.getElementById('b5LoginMobile').value='';document.getElementById('b5LoginPassword').value='';}
 window.addEventListener('load',initMember);
 </script>
 <style id="integrated-member-menu-style">
@@ -319,11 +319,9 @@ window.addEventListener('load',initMember);
 </style>
 <script>
 async function b5SharePin(pin){
- const phone=prompt('யாருக்கு இந்த PIN அனுப்ப வேண்டும்? 10 digit Mobile Number கொடுக்கவும்');
- if(!phone)return;
- if(!/^\d{10}$/.test(phone)){alert('சரியான 10 digit Mobile Number கொடுக்கவும்');return}
- const text=`BORNTOWIN5 Joining PIN: ${pin}\nஇந்த PIN-ஐ பயன்படுத்தி Registration செய்து Activate செய்யுங்கள்.`;
- window.open('https://wa.me/91'+phone+'?text='+encodeURIComponent(text),'_blank');
+ const regUrl=location.origin+'/member.html?joinPin='+encodeURIComponent(pin);
+ const text=`BORNTOWIN5 Joining PIN: ${pin}\nஇந்த PIN-ஐ பயன்படுத்தி Registration செய்து Activate செய்யுங்கள்.\nRegistration Link: ${regUrl}`;
+ window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank');
 }
 function b5RenderWalletPins(pins){
  const el=document.getElementById('walletPins'); if(!el)return;
@@ -366,8 +364,7 @@ window.addEventListener('online',()=>{if(localStorage.getItem('BORNTOWIN5_MEMBER
   <button class="uitem" onclick="uMemberMain('invite',this)">🤝 Share & Invite</button>
   <button class="uitem" onclick="uMemberMain('downline',this)">🌳 My Downline</button>
   <button class="uitem" onclick="uMemberMain('levels',this)">📊 My Levels</button>
-  <button class="uitem" onclick="uMemberMain('messages',this)">📢 My Messages</button>
-  <button class="uitem" onclick="uMemberMain('pinwallet',this)">🔐 My PIN Wallet</button>
+    <button class="uitem" onclick="uMemberMain('pinwallet',this)">🔐 My PIN Wallet</button>
   <div class="ustitle b5-lt-title" style="margin-top:14px">Level Tracking</div>
   <button class="uitem b5-lt-toggle" type="button" onclick="uMemberLevelTrackToggle(this)">📊 Level Tracking <span>⌄</span></button>
   <div id="b5MemberLTOptions" class="b5-lt-options">

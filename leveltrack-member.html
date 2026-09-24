@@ -55,12 +55,12 @@ body{background:radial-gradient(circle at 15% 0,#eef6f0 0,#f6f8f5 35%,#f3f4f1 10
 <div class="topnav"><button class="active" onclick="view('member')">👤 MEMBER</button><button onclick="view('receiver')">💳 RECEIVER</button></div>
 <section id="member">
 <div class="info"><b>SEQUENTIAL LEVEL FLOW</b><br>Direct referrals and level status are loaded from the BORNTOWIN5 server.</div>
-<div class="card"><div class="title">My Membership</div><div class="row"><span>Name</span><b id="mName">—</b></div><div class="row"><span>Mobile</span><b id="mMobile">—</b></div><div class="row"><span>Member ID</span><b id="mId">—</b></div><div class="row"><span>Status</span><span class="badge" id="mStatus">—</span></div><div class="row"><span>Current Level</span><b id="mLevel">—</b></div></div>
-<div class="card"><div class="title">My Referral Link</div><input id="refLink" readonly><button class="secondary" onclick="copyReferral()">COPY REFERRAL LINK</button></div>
-<div class="card"><div class="title">My Direct Referrals</div><div id="refList"><div class="note">Loading…</div></div><div id="refSummary"></div></div>
-<div class="card"><div class="title">Level Upgrade</div><div id="memberStatus"><div class="warn">Loading…</div></div><div id="memberPayment"></div></div>
-<div class="card"><div class="title">My Earnings</div><div id="earnings"><div class="note">No confirmed server payment records yet.</div></div></div>
-<div class="card"><div class="title">Upgrade History</div><div id="history"><div class="note">No upgrade history yet.</div></div></div>
+<div class="card" id="ltMembership"><div class="title">My Membership</div><div class="row"><span>Name</span><b id="mName">—</b></div><div class="row"><span>Mobile</span><b id="mMobile">—</b></div><div class="row"><span>Member ID</span><b id="mId">—</b></div><div class="row"><span>Status</span><span class="badge" id="mStatus">—</span></div><div class="row"><span>Current Level</span><b id="mLevel">—</b></div></div>
+<div class="card" id="ltReferralLink"><div class="title">My Referral Link</div><input id="refLink" readonly><button class="secondary" onclick="copyReferral()">COPY REFERRAL LINK</button></div>
+<div class="card" id="ltReferrals"><div class="title">My Direct Referrals</div><div id="refList"><div class="note">Loading…</div></div><div id="refSummary"></div></div>
+<div class="card" id="ltUpgrade"><div class="title">Level Upgrade</div><div id="memberStatus"><div class="warn">Loading…</div></div><div id="memberPayment"></div></div>
+<div class="card" id="ltEarnings"><div class="title">My Earnings</div><div id="earnings"><div class="note">No confirmed server payment records yet.</div></div></div>
+<div class="card" id="ltHistory"><div class="title">Upgrade History</div><div id="history"><div class="note">No upgrade history yet.</div></div></div>
 </section>
 <section id="receiver" class="hidden"><div class="info"><b>RECEIVER CONFIRMATION</b><br>After the member submits UTR, confirm whether the payment was received.</div><div class="card"><div class="title">Payment Confirmation</div><div id="receiverContent"><div class="note">Loading…</div></div><div id="receiverButtons"></div></div></section>
 </main>
@@ -198,6 +198,7 @@ setInterval(load,5000);setInterval(()=>{if(!$('receiver').classList.contains('hi
 .b5-embedded #receiver{display:none!important}
 .b5-embedded #receiver.b5-v12-show{display:block!important}
 .b5-embedded .topnav{display:none!important}
-.b5-embedded .wrap{padding-top:10px}
+.b5-embedded .top{display:none!important}
+.b5-embedded .wrap{padding-top:72px}
 </style>
 </body></html>
