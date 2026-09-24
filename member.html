@@ -182,7 +182,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--b5-gold)
 <h3 style="margin:10px 0 4px">Admin Message</h3>
 <div id="dashboardAdminMessageList"><div class="small">Admin message இங்கே வரும்.</div></div>
 </section>
-<section class="card" id="referralCard"><span class="tag">MY REFERRAL LINK</span><h3 style="margin:10px 0 4px">Share & Invite</h3><div class="small">இந்த link மூலம் புதிய Member உங்கள் Referral ID-யுடன் Registration செய்யலாம்.</div><input id="myReferralLink" readonly style="margin-top:9px;width:100%;padding:10px;border:1px solid #ddd;border-radius:10px"><button onclick="copyReferralLink()" style="width:100%;margin-top:8px">Copy Referral Link</button></section>
+<section class="card" id="referralCard"><span class="tag">MY REFERRAL LINK</span><h3 style="margin:10px 0 4px">Share & Invite</h3><div class="small">இந்த link மூலம் புதிய Member உங்கள் Referral ID-யுடன் Registration செய்யலாம்.</div><input id="myReferralLink" readonly onclick="shareReferralLinkWhatsApp()" title="Tap to share on WhatsApp" style="margin-top:9px;width:100%;padding:10px;border:1px solid #ddd;border-radius:10px;cursor:pointer"><button onclick="copyReferralLink()" style="width:100%;margin-top:8px">Copy Referral Link</button></section>
 
 <section class="stats">
 <div class="stat" onclick="showLevel(1)"><b id="lv1">0</b><span>Level 1</span><small>Tap</small></div>
@@ -287,6 +287,8 @@ async function b5Refresh(){
 }
 async function memberRefresh(){await b5Refresh();await b5LoadMessages()}
 function memberLogout(){localStorage.removeItem('BORNTOWIN5_MEMBER_ID');location.reload()}
+function shareReferralLinkWhatsApp(){const e=document.getElementById('myReferralLink');const link=(e?.value||'').trim();if(!link)return;const text='Join BORNTOWIN5 using my referral link:
+'+link;location.href='https://wa.me/?text='+encodeURIComponent(text)}
 function copyReferralLink(){const e=document.getElementById('myReferralLink');e.select();navigator.clipboard?.writeText(e.value);alert('Referral link copied')}
 function makeTree(n,l){return `<div class="node"><b>L${l} — ${n.name}</b><div class="small">${n.id}</div>${n.children?.length?'<div class="children">'+n.children.map(x=>makeTree(x,l+1)).join('')+'</div>':''}</div>`}
 async function showLevel(level){const id=localStorage.getItem('BORNTOWIN5_MEMBER_ID');if(!id)return;try{const d=await b5api('/api/member/level/'+encodeURIComponent(id)+'/'+level),box=document.getElementById('detail');box.style.display='block';box.innerHTML='<h3>Level '+level+' — '+d.members.length+' Members</h3>'+(d.members.map(x=>`<div class="member"><b>${x.name}</b><div class="small">${x.memberId} • ${x.mobile}</div></div>`).join('')||'<div class="small">இந்த Level-ல் தற்போது உறுப்பினர்கள் இல்லை.</div>')}catch(e){}}
